@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Compartilhar Link</title>
+</head>
+<body>
+  <script>
+    const url = new URL(window.location);
+    const link = url.searchParams.get("link");
+    if (navigator.share && link) {
+      navigator.share({
+        title: "Abrir no AppSheet",
+        text: "Abra este link no AppSheet:",
+        url: link
+      }).catch(console.error);
+    } else if (link) {
+      document.write(`<p>Copie o link: <a href="${link}">${link}</a></p>`);
+    } else {
+      document.write("<p>Nenhum link recebido.</p>");
+    }
+  </script>
+</body>
+</html>
