@@ -2,30 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Compartilhar Link</title>
+  <title>Compartilhar AppSheet</title>
   <script>
-    const params = new URLSearchParams(location.search);
-    const link = params.get("link");
+    const link = new URLSearchParams(window.location.search).get("link");
 
-    if (navigator.share && link) {
+    if (link && navigator.share) {
       navigator.share({
-        title: "Abrir AppSheet",
-        text: "Abra direto nesta tela do app:",
+        title: "JustBee",
+        text: "Veja essa tela do app:",
         url: link
       }).then(() => {
-        document.body.innerHTML = "<h3>✅ Compartilhado!</h3>";
+        document.body.innerHTML = "<h2>✅ Compartilhado com sucesso</h2>";
       }).catch((err) => {
-        document.body.innerHTML = "<p>❌ Erro ao compartilhar: " + err + "</p>";
+        document.body.innerHTML = "<p>❌ Erro: " + err + "</p>";
       });
     } else {
       document.body.innerHTML = `
-        <p>Seu navegador não suporta compartilhamento automático.</p>
-        <a href="${link}" target="_blank">Abrir link manualmente</a>
+        <p>Compartilhamento não suportado. Copie o link abaixo:</p>
+        <a href="${link}" target="_blank">${link}</a>
       `;
     }
   </script>
 </head>
 <body>
-  <p>Carregando...</p>
+  <p>Processando...</p>
 </body>
 </html>
