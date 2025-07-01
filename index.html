@@ -2,15 +2,28 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Compartilhar tela</title>
+  <title>Compartilhar tela do AppSheet</title>
   <style>
     body {
       font-family: sans-serif;
       padding: 2em;
       text-align: center;
     }
+    button.share-btn {
+      margin-top: 1em;
+      padding: 0.75em 1.5em;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button.share-btn:active {
+      opacity: 0.8;
+    }
     .fallback {
-      margin-top: 2em;
+      margin-top: 1.5em;
     }
     .fallback input {
       width: 100%;
@@ -20,11 +33,11 @@
   </style>
 </head>
 <body>
-  <h2>Compartilhando...</h2>
-  <p id="status">Aguarde enquanto abrimos o menu de compartilhamento</p>
-
+  <h2>Compartilhar esta tela do AppSheet</h2>
+  <p>Clique no botão abaixo para abrir o compartilhamento nativo:</p>
+  <button class="share-btn" id="shareBtn">🔗 Compartilhar</button>
   <div class="fallback" id="fallback" style="display:none;">
-    <p>❌ Compartilhamento não suportado. Copie ou abra manualmente:</p>
+    <p>Compartilhamento não suportado. Copie ou abra manualmente:</p>
     <input type="text" id="linkInput" readonly>
     <p><a id="openLink" href="#" target="_blank">Abrir no AppSheet</a></p>
   </div>
@@ -32,33 +45,36 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const link = params.get("link");
+    const shareBtn = document.getElementById("shareBtn");
     const fallback = document.getElementById("fallback");
     const linkInput = document.getElementById("linkInput");
     const openLink = document.getElementById("openLink");
-    const status = document.getElementById("status");
 
-    if (!link) {
-      status.innerText = "❌ Nenhum link disponível.";
-    } else if (navigator.share) {
-      navigator.share({
-        title: "JustBee",
-        text: "Veja esta tela do app:",
-        url: link
-      }).then(() => {
-        status.innerText = "✅ Compartilhado com sucesso!";
-      }).catch((err) => {
-        console.error("Erro ao compartilhar:", err);
+    shareBtn.addEventListener("click", () => {
+      if (!link) {
+        alert("❌ Nenhum link disponível.");
+        return;
+      }
+      if (navigator.share) {
+        navigator.share({
+          title: "Veja esta tela do AppSheet",
+          text: "Abra direto nesta tela do app:",
+          url: link
+        })
+        .catch(err => {
+          console.error("share error:", err);
+          showFallback();
+        });
+      } else {
         showFallback();
-      });
-    } else {
-      showFallback();
-    }
+      }
+    });
 
     function showFallback() {
+      shareBtn.style.display = "none";
       fallback.style.display = "block";
       linkInput.value = link;
       openLink.href = link;
-      status.innerText = "❌ Seu navegador não suporta compartilhamento direto.";
     }
   </script>
 </body>
