@@ -1,24 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>Compartilhar Link</title>
-</head>
-<body>
   <script>
-    const url = new URL(window.location);
-    const link = url.searchParams.get("link");
+    const params = new URLSearchParams(location.search);
+    const link = params.get("link");
+
     if (navigator.share && link) {
       navigator.share({
-        title: "Abrir no AppSheet",
-        text: "Abra este link no AppSheet:",
+        title: "Abrir AppSheet",
+        text: "Abra direto nesta tela do app:",
         url: link
-      }).catch(console.error);
-    } else if (link) {
-      document.write(`<p>Copie o link: <a href="${link}">${link}</a></p>`);
+      }).then(() => {
+        document.body.innerHTML = "<h3>✅ Compartilhado!</h3>";
+      }).catch((err) => {
+        document.body.innerHTML = "<p>❌ Erro ao compartilhar: " + err + "</p>";
+      });
     } else {
-      document.write("<p>Nenhum link recebido.</p>");
+      document.body.innerHTML = `
+        <p>Seu navegador não suporta compartilhamento automático.</p>
+        <a href="${link}" target="_blank">Abrir link manualmente</a>
+      `;
     }
   </script>
+</head>
+<body>
+  <p>Carregando...</p>
 </body>
 </html>
