@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Compartilhar tela do AppSheet</title>
+  <title>Compartilhar essa empresa do site aloj.com.br </title>
   <style>
     body {
       font-family: sans-serif;
@@ -33,13 +33,13 @@
   </style>
 </head>
 <body>
-  <h2>Compartilhar esta tela do AppSheet</h2>
+  <h2>Compartilhar essa empresa do site aloj.com.br</h2>
   <p>Clique no botão abaixo para abrir o compartilhamento nativo:</p>
   <button class="share-btn" id="shareBtn">🔗 Compartilhar</button>
   <div class="fallback" id="fallback" style="display:none;">
     <p>Compartilhamento não suportado. Copie ou abra manualmente:</p>
     <input type="text" id="linkInput" readonly>
-    <p><a id="openLink" href="#" target="_blank">Abrir no AppSheet</a></p>
+    <p><a id="openLink" href="#" target="_blank">Abrir essa empresa do site aloj.com.br</a></p>
   </div>
 
   <script>
@@ -57,8 +57,8 @@
       }
       if (navigator.share) {
         navigator.share({
-          title: "Veja esta tela do AppSheet",
-          text: "Abra direto nesta tela do app:",
+          title: "Veja essa empresa do site aloj.com.br",
+          text: "Abra direto nesta tela do app no site aloj.com.br:",
           url: link
         })
         .catch(err => {
