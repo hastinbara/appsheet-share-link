@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Compartilhar essa empresa do site aloj.com.br </title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body {
       font-family: sans-serif;
       padding: 2em;
       text-align: center;
     }
-    button.share-btn {
+    .btn {
+      display: inline-block;
       margin-top: 1em;
       padding: 0.75em 1.5em;
       background-color: #4285f4;
@@ -18,10 +20,9 @@
       border-radius: 6px;
       font-size: 1em;
       cursor: pointer;
+      text-decoration: none;
     }
-    button.share-btn:active {
-      opacity: 0.8;
-    }
+    .btn:active { opacity: 0.8; }
     .fallback {
       margin-top: 1.5em;
     }
@@ -30,25 +31,55 @@
       padding: 0.5em;
       font-size: 0.9em;
     }
+    .row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:0.5em; }
   </style>
 </head>
 <body>
   <h2>Compartilhar essa empresa do site aloj.com.br</h2>
-  <p>Clique no botão abaixo para abrir o compartilhamento nativo:</p>
-  <button class="share-btn" id="shareBtn">🔗 Compartilhar</button>
+  <p>Clique nos botões abaixo:</p>
+
+  <div class="row">
+    <button class="btn" id="shareBtn">🔗 Compartilhar</button>
+    <!-- Botão para abrir o intent (apenas em Android) -->
+    <button class="btn" id="openAppBtn" style="display:none;">📱 Abrir no app (Android)</button>
+  </div>
+
   <div class="fallback" id="fallback" style="display:none;">
     <p>Compartilhamento não suportado. Copie ou abra manualmente:</p>
     <input type="text" id="linkInput" readonly>
-    <p><a id="openLink" href="#" target="_blank">Abrir essa empresa do site aloj.com.br</a></p>
+    <p>
+      <a id="openLink" href="#" target="_blank" rel="noopener">Abrir essa empresa no navegador</a>
+      <span id="openIntentWrapper" style="display:block;margin-top:8px;">
+        <!-- link intent visível para fallback -->
+        <a id="openIntent" href="#" target="_self" rel="noopener">Abrir no app (Android)</a>
+      </span>
+    </p>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const link = params.get("link");
+    const rawLink = params.get("link");
+    const APPSHEET_START = "https://www.appsheet.com/start/ea43f737-c0cc-474d-94e3-82c74ed6301a";
+    const link = rawLink || APPSHEET_START;
+
+    // seu package name fornecido
+    const packageName = "com.appsheet.whitelabel.guid_ea43f737_c0cc_474d_94e3_82c74ed6301a";
+
+    // Construir intent com browser_fallback_url apontando para 'link'
+    const intentLink = `intent://#Intent;scheme=appsheet;package=${packageName};S.browser_fallback_url=${encodeURIComponent(link)};end;`;
+
     const shareBtn = document.getElementById("shareBtn");
+    const openAppBtn = document.getElementById("openAppBtn");
     const fallback = document.getElementById("fallback");
     const linkInput = document.getElementById("linkInput");
     const openLink = document.getElementById("openLink");
+    const openIntent = document.getElementById("openIntent");
+
+    // Mostrar botão "Abrir no app" só para Android (sinal simples por userAgent)
+    const isAndroid = /Android/i.test(navigator.userAgent || "");
+    if (isAndroid) {
+      openAppBtn.style.display = "inline-block";
+    }
 
     shareBtn.addEventListener("click", () => {
       if (!link) {
@@ -70,12 +101,30 @@
       }
     });
 
+    // Ao clicar no botão Abrir no app, navegamos para o intent
+    openAppBtn.addEventListener("click", () => {
+      // Navegar direto para o intent:// — Chrome no Android interpretará
+      window.location.href = intentLink;
+    });
+
+    // Configurar links de fallback
     function showFallback() {
       shareBtn.style.display = "none";
       fallback.style.display = "block";
       linkInput.value = link;
       openLink.href = link;
+      openIntent.href = intentLink;
     }
+
+    // Se o navegador não suportar navigator.share mas for Android, já mostrar o link de app (opcional)
+    if (!navigator.share && isAndroid) {
+      // mostra direta a fallback para facilitar
+      // (não escondemos o shareBtn porque alguns navegadores suportam o share)
+      // showFallback(); // se quiser exibir automaticamente, descomente esta linha
+    }
+
+    // For debugging (opcional)
+    // console.log({ link, intentLink, isAndroid });
   </script>
 </body>
 </html>
